@@ -173,7 +173,7 @@
             <div class="text-center space-y-3">
                 <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">Sign Up</h2>
                 
-                <!-- Sign-Up Deadline Badge (Moved here) -->
+                <!-- Sign-Up Deadline Badge -->
                 <div class="flex flex-wrap items-center justify-center gap-3">
                     <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cardDark border border-cardBorder text-xs text-subtleText">
                         <span class="w-1.5 h-1.5 rounded-full bg-goldAccent animate-pulse"></span>
@@ -296,18 +296,17 @@
         <p>Auguste-Schmidt-Straße 22 • Sign-up Deadline: November 11th</p>
     </footer>
 
-    <!-- JavaScript State Management -->
+    <!-- JavaScript State & API Management -->
     <script>
-        // Initial Sample Data (First Names Only)
+        const SHEETDB_URL = "https://sheetdb.io/api/v1/toume3e2gmo3e";
+        const MAX_CAPACITY = 30;
+
         const DEFAULT_PARTICIPANTS = [
             "Lukas", "Sarah", "Felix", "Clara", "Jonas", 
             "Mia", "Leon", "Emma", "Maximilian", "Hannah", 
             "Julian", "Laura"
         ];
 
-        const MAX_CAPACITY = 30;
-
-        // Fetch participants from LocalStorage or fallback to defaults
         function getParticipants() {
             const stored = localStorage.getItem('running_dinner_en_participants');
             if (stored) {
@@ -320,20 +319,16 @@
             return DEFAULT_PARTICIPANTS;
         }
 
-        // Render UI Elements
         function renderUI() {
             const list = getParticipants();
             const grid = document.getElementById('participantGrid');
             const counterText = document.getElementById('spotCounterText');
             
-            // Update counter text
             const count = list.length;
             counterText.textContent = `${count} of ${MAX_CAPACITY} spots filled`;
 
-            // Clear Grid
             grid.innerHTML = '';
 
-            // Populate First Names
             list.forEach(name => {
                 const card = document.createElement('div');
                 card.className = 'carrd-card px-4 py-3 rounded-xl text-center text-creamText text-sm border border-cardBorder hover:border-goldMuted/40 transition-colors flex items-center justify-center gap-2';
@@ -341,7 +336,6 @@
                 grid.appendChild(card);
             });
 
-            // Disable button if limit reached
             if (count >= MAX_CAPACITY) {
                 const btn = document.getElementById('submitBtn');
                 btn.disabled = true;
@@ -350,10 +344,10 @@
             }
         }
 
-        // Form Submission Handler
-        function handleFormSubmit(event) {
+        async function handleFormSubmit(event) {
             event.preventDefault();
 
+            const submitBtn = document.getElementById('submitBtn');
             const firstNameInput = document.getElementById('firstName');
             const firstName = firstNameInput.value.trim();
 
@@ -366,29 +360,61 @@
                 return;
             }
 
-            // Capitalize first name
-            const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+            // Gather form payload
+            const payload = {
+                data: {
+                    firstName: firstName,
+                    lastName: document.getElementById('lastName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: document.getElementById('phone').value.trim(),
+                    street: document.getElementById('street').value.trim(),
+                    houseNo: document.getElementById('houseNo').value.trim(),
+                    coursePref: document.getElementById('coursePref').value,
+                    dietary: document.getElementById('dietary').value,
+                    timestamp: new Date().toISOString()
+                }
+            };
 
-            // Save to LocalStorage
-            participants.push(formattedName);
-            localStorage.setItem('running_dinner_en_participants', JSON.stringify(participants));
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
 
-            // Hide Form & Show Confirmation Message
-            document.getElementById('signupForm').classList.add('hidden');
-            document.getElementById('successBox').classList.remove('hidden');
+            try {
+                const response = await fetch(SHEETDB_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
 
-            // Re-render list & counter
-            renderUI();
+                if (response.ok || response.status === 201) {
+                    const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+                    participants.push(formattedName);
+                    localStorage.setItem('running_dinner_en_participants', JSON.stringify(participants));
+
+                    document.getElementById('signupForm').classList.add('hidden');
+                    document.getElementById('successBox').classList.remove('hidden');
+
+                    renderUI();
+                } else {
+                    throw new Error('Failed to post data to SheetDB');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('There was an issue submitting your registration. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Complete Registration';
+            }
         }
 
-        // Helper to prevent XSS
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
         }
 
-        // Initial load
         window.onload = function() {
             renderUI();
         };
