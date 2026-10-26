@@ -88,7 +88,6 @@
 
         <!-- SECTION 1: HERO HEADER -->
         <section class="text-center pt-12 pb-4 space-y-4">
-            <!-- Title -->
             <div class="space-y-3">
                 <h1 class="font-serif text-5xl sm:text-7xl font-normal tracking-tight text-creamText">
                     Running Dinner
@@ -101,7 +100,6 @@
 
         <!-- SECTION 2: WHAT IS A RUNNING DINNER & HOW IT WORKS -->
         <section id="how-it-works" class="space-y-10">
-            <!-- Concise Explanation -->
             <div class="carrd-card p-6 sm:p-8 rounded-3xl text-center space-y-3 border-goldMuted/30 bg-gradient-to-b from-cardDark to-bgDark">
                 <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">What is a Running Dinner?</h2>
                 <p class="text-subtleText text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
@@ -182,7 +180,7 @@
 
                     <!-- Live Counter -->
                     <div class="inline-flex items-center gap-2 text-xs text-subtleText bg-cardDark border border-cardBorder px-4 py-1.5 rounded-full">
-                        <span id="spotCounterText" class="text-goldAccent font-medium">12 of 30 spots filled</span>
+                        <span id="spotCounterText" class="text-goldAccent font-medium">Loading spots...</span>
                     </div>
                 </div>
             </div>
@@ -284,7 +282,7 @@
 
             <!-- Participant Grid (First Names Only) -->
             <div id="participantGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                <!-- Dynamically populated via JavaScript -->
+                <!-- Dynamically populated via SheetDB -->
             </div>
         </section>
 
@@ -296,46 +294,43 @@
         <p>Auguste-Schmidt-Straße 22 • Sign-up Deadline: November 11th</p>
     </footer>
 
-    <!-- JavaScript State & API Management -->
+    <!-- JavaScript State & SheetDB Integration -->
     <script>
         const SHEETDB_URL = "https://sheetdb.io/api/v1/toume3e2gmo3e";
         const MAX_CAPACITY = 30;
 
-        const DEFAULT_PARTICIPANTS = [
-            "Lukas", "Sarah", "Felix", "Clara", "Jonas", 
-            "Mia", "Leon", "Emma", "Maximilian", "Hannah", 
-            "Julian", "Laura"
-        ];
-
-        function getParticipants() {
-            const stored = localStorage.getItem('running_dinner_en_participants');
-            if (stored) {
-                try {
-                    return JSON.parse(stored);
-                } catch (e) {
-                    return DEFAULT_PARTICIPANTS;
-                }
+        // Fetch guest list directly from Google Sheets (GET request)
+        async function fetchParticipants() {
+            try {
+                const response = await fetch(SHEETDB_URL);
+                if (!response.ok) throw new Error("Failed to fetch guest list");
+                const data = await response.json();
+                renderUI(data);
+            } catch (err) {
+                console.error("Error loading participants:", err);
+                document.getElementById('spotCounterText').textContent = "Unable to load spots";
             }
-            return DEFAULT_PARTICIPANTS;
         }
 
-        function renderUI() {
-            const list = getParticipants();
+        // Render UI with fetched data
+        function renderUI(participants) {
             const grid = document.getElementById('participantGrid');
             const counterText = document.getElementById('spotCounterText');
+            const count = participants.length;
             
-            const count = list.length;
             counterText.textContent = `${count} of ${MAX_CAPACITY} spots filled`;
-
             grid.innerHTML = '';
 
-            list.forEach(name => {
+            participants.forEach(p => {
+                // Ensure we grab the firstName property from each sheet row
+                const name = p.firstName || "Guest";
                 const card = document.createElement('div');
                 card.className = 'carrd-card px-4 py-3 rounded-xl text-center text-creamText text-sm border border-cardBorder hover:border-goldMuted/40 transition-colors flex items-center justify-center gap-2';
                 card.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-goldAccent/60"></span><span>${escapeHtml(name)}</span>`;
                 grid.appendChild(card);
             });
 
+            // Disable form if capacity is met
             if (count >= MAX_CAPACITY) {
                 const btn = document.getElementById('submitBtn');
                 btn.disabled = true;
@@ -344,6 +339,7 @@
             }
         }
 
+        // Form Submission Handler (POST to SheetDB)
         async function handleFormSubmit(event) {
             event.preventDefault();
 
@@ -353,29 +349,18 @@
 
             if (!firstName) return;
 
-            const participants = getParticipants();
-
-            if (participants.length >= MAX_CAPACITY) {
-                alert('Sorry, all spots are currently filled!');
-                return;
-            }
-
-            // Gather form payload
             const payload = {
-                data: {
-                    firstName: firstName,
-                    lastName: document.getElementById('lastName').value.trim(),
-                    email: document.getElementById('email').value.trim(),
-                    phone: document.getElementById('phone').value.trim(),
-                    street: document.getElementById('street').value.trim(),
-                    houseNo: document.getElementById('houseNo').value.trim(),
-                    coursePref: document.getElementById('coursePref').value,
-                    dietary: document.getElementById('dietary').value,
-                    timestamp: new Date().toISOString()
-                }
+                firstName: firstName,
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                street: document.getElementById('street').value.trim(),
+                houseNo: document.getElementById('houseNo').value.trim(),
+                coursePref: document.getElementById('coursePref').value,
+                dietary: document.getElementById('dietary').value,
+                timestamp: new Date().toLocaleString()
             };
 
-            // Loading state
             submitBtn.disabled = true;
             submitBtn.textContent = 'Submitting...';
 
@@ -390,19 +375,17 @@
                 });
 
                 if (response.ok || response.status === 201) {
-                    const formattedName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-                    participants.push(formattedName);
-                    localStorage.setItem('running_dinner_en_participants', JSON.stringify(participants));
-
+                    // Hide Form & Show Success
                     document.getElementById('signupForm').classList.add('hidden');
                     document.getElementById('successBox').classList.remove('hidden');
 
-                    renderUI();
+                    // Refresh guest list immediately from the sheet
+                    await fetchParticipants();
                 } else {
                     throw new Error('Failed to post data to SheetDB');
                 }
             } catch (err) {
-                console.error(err);
+                console.error("Submission Error:", err);
                 alert('There was an issue submitting your registration. Please try again.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Complete Registration';
@@ -415,8 +398,9 @@
             return div.innerHTML;
         }
 
+        // Load guest list on page load
         window.onload = function() {
-            renderUI();
+            fetchParticipants();
         };
     </script>
 </body>
