@@ -2,8 +2,10 @@
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Fixed iOS Safari viewport scaling and safe area inset behavior -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Running Dinner | Three Courses, New Faces</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -35,11 +37,35 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        body {
+        /* Base Reset & iOS Fit Adjustments */
+        html, body {
             background-color: #0f0e0d;
             color: #f3efea;
+            overflow-x: hidden;
+            width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
         }
-        /* Carrd-style minimalist scrollbar */
+
+        /* Prevent iOS automatic auto-zoom when tapping input fields (requires 16px min size on mobile) */
+        input, select, textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.75rem;
+        }
+
+        /* Custom dropdown arrow for iOS select elements */
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%20a19a91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25em;
+            padding-right: 2.5rem !important;
+        }
+
+        /* Custom minimalist scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -50,15 +76,14 @@
             background: #292724;
             border-radius: 3px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #9e8128;
-        }
+
         /* Glass card styling */
         .carrd-card {
             background-color: #171614;
             border: 1px solid #292724;
             box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
         }
+
         /* Subtle glowing divider */
         .gold-divider {
             height: 1px;
@@ -67,29 +92,29 @@
         }
     </style>
 </head>
-<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-goldAccent/30 selection:text-creamText">
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-goldAccent/30 selection:text-creamText px-4 sm:px-6">
 
-    <!-- Ambient Background Lighting -->
+    <!-- Ambient Background Lighting (Optimized for Mobile GPU rendering) -->
     <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-goldAccent/5 rounded-full blur-[120px]"></div>
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-goldAccent/5 rounded-full blur-[90px] sm:blur-[120px]"></div>
     </div>
 
-    <!-- Navigation Header (Minimalist) -->
-    <header class="relative z-10 w-full max-w-2xl mx-auto px-6 pt-8 pb-4 flex justify-between items-center text-xs tracking-widest uppercase text-subtleText">
+    <!-- Navigation Header -->
+    <header class="relative z-10 w-full max-w-2xl mx-auto pt-6 sm:pt-8 pb-4 flex justify-between items-center text-xs tracking-widest uppercase text-subtleText">
         <span class="font-serif italic lowercase text-base text-goldAccent">running dinner</span>
-        <nav class="space-x-6">
+        <nav class="space-x-4 sm:space-x-6">
             <a href="#how-it-works" class="hover:text-creamText transition-colors">Concept</a>
             <a href="#sign-up" class="hover:text-creamText transition-colors">Sign Up</a>
             <a href="#participants" class="hover:text-creamText transition-colors">Guests</a>
         </nav>
     </header>
 
-    <main class="relative z-10 flex-grow w-full max-w-2xl mx-auto px-4 py-8 space-y-20">
+    <main class="relative z-10 flex-grow w-full max-w-2xl mx-auto py-6 sm:py-8 space-y-12 sm:space-y-20">
 
         <!-- SECTION 1: HERO HEADER -->
-        <section class="text-center pt-12 pb-4 space-y-4">
+        <section class="text-center pt-6 sm:pt-12 pb-2 sm:pb-4 space-y-4">
             <div class="space-y-3">
-                <h1 class="font-serif text-5xl sm:text-7xl font-normal tracking-tight text-creamText">
+                <h1 class="font-serif text-4xl sm:text-7xl font-normal tracking-tight text-creamText">
                     Running Dinner
                 </h1>
             </div>
@@ -99,64 +124,65 @@
         <div class="gold-divider"></div>
 
         <!-- SECTION 2: WHAT IS A RUNNING DINNER & HOW IT WORKS -->
-        <section id="how-it-works" class="space-y-10">
-            <div class="carrd-card p-6 sm:p-8 rounded-3xl text-center space-y-3 border-goldMuted/30 bg-gradient-to-b from-cardDark to-bgDark">
-                <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">What is a Running Dinner?</h2>
-                <p class="text-subtleText text-sm sm:text-base leading-relaxed font-light max-w-xl mx-auto">
+        <section id="how-it-works" class="space-y-8 sm:space-y-10">
+            <!-- Concise Explanation -->
+            <div class="carrd-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl text-center space-y-3 border-goldMuted/30 bg-gradient-to-b from-cardDark to-bgDark">
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">What is a Running Dinner?</h2>
+                <p class="text-subtleText text-xs sm:text-base leading-relaxed font-light max-w-xl mx-auto">
                     A Running Dinner is a progressive social meal where <strong class="text-creamText font-normal">each participant is responsible for hosting one meal course</strong> (either Starter or Main) at their home for 2 guests, while attending the other course as a guest at someone else's place. At 20:30, all 30 guests come together at one venue for dessert and the after-party!
                 </p>
             </div>
 
-            <div class="text-center space-y-2 pt-4">
-                <h3 class="font-serif text-xl sm:text-2xl font-normal text-creamText">The Schedule</h3>
-                <p class="text-subtleText text-xs tracking-wider uppercase">How the evening unfolds</p>
+            <div class="text-center space-y-2 pt-2 sm:pt-4">
+                <h3 class="font-serif text-lg sm:text-2xl font-normal text-creamText">The Schedule</h3>
+                <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">How the evening unfolds</p>
             </div>
 
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
                 <!-- Course 1 -->
-                <div class="carrd-card p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:border-goldMuted/50">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-lg font-serif">
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-row items-center justify-between gap-3 transition-all">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">
                             17:00
                         </div>
                         <div>
-                            <h4 class="text-creamText font-medium text-base">Starter Course</h4>
-                            <p class="text-subtleText text-xs mt-0.5">Group of 3 (1 host + 2 guests)</p>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Starter Course</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Group of 3 (1 host + 2 guests)</p>
                         </div>
                     </div>
-                    <span class="text-xs text-subtleText bg-bgDark px-3 py-1 rounded-full border border-cardBorder">
+                    <span class="text-[10px] sm:text-xs text-subtleText bg-bgDark px-2.5 py-1 rounded-full border border-cardBorder shrink-0">
                         Host Home 1
                     </span>
                 </div>
 
                 <!-- Course 2 -->
-                <div class="carrd-card p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all hover:border-goldMuted/50">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-lg font-serif">
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-row items-center justify-between gap-3 transition-all">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">
                             19:00
                         </div>
                         <div>
-                            <h4 class="text-creamText font-medium text-base">Main Course</h4>
-                            <p class="text-subtleText text-xs mt-0.5">Reshuffled group of 3 new guests</p>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Main Course</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Reshuffled group of 3 new guests</p>
                         </div>
                     </div>
-                    <span class="text-xs text-subtleText bg-bgDark px-3 py-1 rounded-full border border-cardBorder">
+                    <span class="text-[10px] sm:text-xs text-subtleText bg-bgDark px-2.5 py-1 rounded-full border border-cardBorder shrink-0">
                         Host Home 2
                     </span>
                 </div>
 
                 <!-- Course 3 & Party -->
-                <div class="carrd-card p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-goldMuted/40 bg-cardDark/90">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-xl bg-goldAccent/10 border border-goldAccent/30 flex items-center justify-center text-goldAccent text-lg font-serif">
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-goldMuted/40 bg-cardDark/90">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-goldAccent/10 border border-goldAccent/30 flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">
                             20:30
                         </div>
                         <div>
-                            <h4 class="text-creamText font-medium text-base">Dessert & After-Party</h4>
-                            <p class="text-subtleText text-xs mt-0.5">Everyone gathers together for dessert & drinks</p>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Dessert & After-Party</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Everyone gathers together for dessert & drinks</p>
                         </div>
                     </div>
-                    <span class="text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/20 px-3 py-1 rounded-full">
+                    <span class="text-[10px] sm:text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/20 px-3 py-1 rounded-full self-start sm:self-auto">
                         Auguste-Schmidt-Str. 22
                     </span>
                 </div>
@@ -167,71 +193,71 @@
         <div class="gold-divider"></div>
 
         <!-- SECTION 3: SIGN UP -->
-        <section id="sign-up" class="space-y-8">
+        <section id="sign-up" class="space-y-6 sm:space-y-8">
             <div class="text-center space-y-3">
-                <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">Sign Up</h2>
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">Sign Up</h2>
                 
                 <!-- Sign-Up Deadline Badge -->
-                <div class="flex flex-wrap items-center justify-center gap-3">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cardDark border border-cardBorder text-xs text-subtleText">
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cardDark border border-cardBorder text-[11px] sm:text-xs text-subtleText">
                         <span class="w-1.5 h-1.5 rounded-full bg-goldAccent animate-pulse"></span>
                         <span>Sign-up Deadline: November 11th</span>
                     </div>
 
                     <!-- Live Counter -->
-                    <div class="inline-flex items-center gap-2 text-xs text-subtleText bg-cardDark border border-cardBorder px-4 py-1.5 rounded-full">
+                    <div class="inline-flex items-center gap-2 text-[11px] sm:text-xs text-subtleText bg-cardDark border border-cardBorder px-3.5 py-1.5 rounded-full">
                         <span id="spotCounterText" class="text-goldAccent font-medium">Loading spots...</span>
                     </div>
                 </div>
             </div>
 
             <!-- Form Container -->
-            <form id="signupForm" onsubmit="handleFormSubmit(event)" class="carrd-card p-6 sm:p-8 rounded-3xl space-y-6">
+            <form id="signupForm" onsubmit="handleFormSubmit(event)" class="carrd-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
                 
                 <!-- First Name & Last Name -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="text-xs text-subtleText uppercase tracking-wider block">First Name *</label>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">First Name *</label>
                         <input type="text" id="firstName" required placeholder="First name" 
-                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                     </div>
-                    <div class="space-y-1.5">
-                        <label class="text-xs text-subtleText uppercase tracking-wider block">Last Name *</label>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Last Name *</label>
                         <input type="text" id="lastName" required placeholder="Last name" 
-                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                     </div>
                 </div>
 
                 <!-- Email & Phone Number -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="space-y-1.5">
-                        <label class="text-xs text-subtleText uppercase tracking-wider block">Email Address *</label>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Email Address *</label>
                         <input type="email" id="email" required placeholder="you@example.com" 
-                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                     </div>
-                    <div class="space-y-1.5">
-                        <label class="text-xs text-subtleText uppercase tracking-wider block">Phone Number *</label>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Phone Number *</label>
                         <input type="tel" id="phone" required placeholder="+49 123 456789" 
-                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                     </div>
                 </div>
 
                 <!-- Address -->
-                <div class="space-y-1.5">
-                    <label class="text-xs text-subtleText uppercase tracking-wider block">Address *</label>
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Address *</label>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <input type="text" id="street" required placeholder="Street" 
-                            class="sm:col-span-2 bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="sm:col-span-2 bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                         <input type="text" id="houseNo" required placeholder="House No. / Floor" 
-                            class="bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
+                            class="bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors placeholder:text-subtleText/40">
                     </div>
                 </div>
 
                 <!-- Hosting Preference -->
-                <div class="space-y-1.5">
-                    <label class="text-xs text-subtleText uppercase tracking-wider block">Hosting Preference *</label>
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Hosting Preference *</label>
                     <select id="coursePref" required 
-                        class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors">
+                        class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
                         <option value="" disabled selected>Select an option</option>
                         <option value="Starter">I can host the Starter Course (17:00)</option>
                         <option value="Main">I can host the Main Course (19:00)</option>
@@ -240,10 +266,10 @@
                 </div>
 
                 <!-- Dietary Restrictions -->
-                <div class="space-y-1.5">
-                    <label class="text-xs text-subtleText uppercase tracking-wider block">Dietary Preference *</label>
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Dietary Preference *</label>
                     <select id="dietary" required 
-                        class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText text-sm focus:outline-none focus:border-goldAccent transition-colors">
+                        class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
                         <option value="" disabled selected>Select an option</option>
                         <option value="Flexible">Flexible / No restrictions</option>
                         <option value="Vegetarian">Vegetarian</option>
@@ -253,13 +279,13 @@
 
                 <!-- Submit Button -->
                 <button type="submit" id="submitBtn" 
-                    class="w-full bg-goldAccent text-bgDark font-medium py-3.5 rounded-xl hover:bg-goldAccent/90 transition-all duration-200 text-sm tracking-wide mt-4">
+                    class="w-full bg-goldAccent text-bgDark font-medium py-3.5 rounded-xl hover:bg-goldAccent/90 active:scale-[0.98] transition-all duration-200 text-sm tracking-wide mt-2">
                     Complete Registration
                 </button>
             </form>
 
             <!-- Success Confirmation Box -->
-            <div id="successBox" class="hidden carrd-card p-6 rounded-3xl border-goldAccent/40 text-center space-y-3">
+            <div id="successBox" class="hidden carrd-card p-6 rounded-2xl sm:rounded-3xl border-goldAccent/40 text-center space-y-3">
                 <div class="w-10 h-10 rounded-full bg-goldAccent/20 text-goldAccent flex items-center justify-center mx-auto text-lg">
                     <i class="fa-solid fa-check"></i>
                 </div>
@@ -276,12 +302,12 @@
         <!-- SECTION 4: LIST OF PARTICIPANTS -->
         <section id="participants" class="space-y-6">
             <div class="text-center space-y-2">
-                <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">Guest List</h2>
-                <p class="text-subtleText text-xs tracking-wider uppercase">Registered Participants</p>
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">Guest List</h2>
+                <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">Registered Participants</p>
             </div>
 
             <!-- Participant Grid (First Names Only) -->
-            <div id="participantGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div id="participantGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
                 <!-- Dynamically populated via SheetDB -->
             </div>
         </section>
@@ -289,7 +315,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="relative z-10 py-10 text-center text-xs text-subtleText border-t border-cardBorder mt-20">
+    <footer class="relative z-10 py-8 text-center text-[11px] sm:text-xs text-subtleText border-t border-cardBorder mt-12 sm:mt-20">
         <p class="font-serif italic text-goldAccent mb-1">Running Dinner</p>
         <p>Auguste-Schmidt-Straße 22 • Sign-up Deadline: November 11th</p>
     </footer>
@@ -299,7 +325,6 @@
         const SHEETDB_URL = "https://sheetdb.io/api/v1/toume3e2gmo3e";
         const MAX_CAPACITY = 30;
 
-        // Fetch guest list directly from Google Sheets (GET request)
         async function fetchParticipants() {
             try {
                 const response = await fetch(SHEETDB_URL);
@@ -312,7 +337,6 @@
             }
         }
 
-        // Render UI with fetched data
         function renderUI(participants) {
             const grid = document.getElementById('participantGrid');
             const counterText = document.getElementById('spotCounterText');
@@ -322,15 +346,13 @@
             grid.innerHTML = '';
 
             participants.forEach(p => {
-                // Ensure we grab the firstName property from each sheet row
                 const name = p.firstName || "Guest";
                 const card = document.createElement('div');
-                card.className = 'carrd-card px-4 py-3 rounded-xl text-center text-creamText text-sm border border-cardBorder hover:border-goldMuted/40 transition-colors flex items-center justify-center gap-2';
-                card.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-goldAccent/60"></span><span>${escapeHtml(name)}</span>`;
+                card.className = 'carrd-card px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-center text-creamText text-xs sm:text-sm border border-cardBorder flex items-center justify-center gap-2';
+                card.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-goldAccent/60 shrink-0"></span><span class="truncate">${escapeHtml(name)}</span>`;
                 grid.appendChild(card);
             });
 
-            // Disable form if capacity is met
             if (count >= MAX_CAPACITY) {
                 const btn = document.getElementById('submitBtn');
                 btn.disabled = true;
@@ -339,7 +361,6 @@
             }
         }
 
-        // Form Submission Handler (POST to SheetDB)
         async function handleFormSubmit(event) {
             event.preventDefault();
 
@@ -375,11 +396,8 @@
                 });
 
                 if (response.ok || response.status === 201) {
-                    // Hide Form & Show Success
                     document.getElementById('signupForm').classList.add('hidden');
                     document.getElementById('successBox').classList.remove('hidden');
-
-                    // Refresh guest list immediately from the sheet
                     await fetchParticipants();
                 } else {
                     throw new Error('Failed to post data to SheetDB');
@@ -398,7 +416,6 @@
             return div.innerHTML;
         }
 
-        // Load guest list on page load
         window.onload = function() {
             fetchParticipants();
         };
