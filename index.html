@@ -1,66 +1,356 @@
-// Point to your serverless backend endpoints instead of raw SheetDB
-    const API_GUESTS_URL = "https://running-dinner-backend.vercel.app/api/guests";
-    const API_SUBMIT_URL = "https://running-dinner-backend.vercel.app/api/submit";
-    const MAX_CAPACITY = 30;
-
-    // 1. Fetch sanitized guest list
-    async function fetchParticipants() {
-        try {
-            const response = await fetch(API_GUESTS_URL);
-            if (!response.ok) throw new Error("Failed to fetch guest list");
-            const data = await response.json();
-            renderUI(data);
-        } catch (err) {
-            console.error("Error loading participants:", err);
-            document.getElementById('spotCounterText').textContent = "Unable to load spots";
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Running Dinner | Three Courses, New Faces</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#0f0e0d',
+                        cardDark: '#171614',
+                        cardBorder: '#292724',
+                        goldAccent: '#d4af37',
+                        goldMuted: '#9e8128',
+                        creamText: '#f3efea',
+                        subtleText: '#a19a91',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
         }
-    }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    // 2. Submit form to serverless function
-    async function handleFormSubmit(event) {
-        event.preventDefault();
+    <style>
+        html, body {
+            background-color: #0f0e0d;
+            color: #f3efea;
+            overflow-x: hidden;
+            width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input, select, textarea {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border-radius: 0.75rem;
+        }
+        select {
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%20a19a91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.25em;
+            padding-right: 2.5rem !important;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0e0d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292724;
+            border-radius: 3px;
+        }
+        .carrd-card {
+            background-color: #171614;
+            border: 1px solid #292724;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .gold-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-goldAccent/30 selection:text-creamText px-4 sm:px-6">
 
-        const submitBtn = document.getElementById('submitBtn');
-        const firstNameInput = document.getElementById('firstName');
-        const firstName = firstNameInput.value.trim();
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-goldAccent/5 rounded-full blur-[90px] sm:blur-[120px]"></div>
+    </div>
 
-        if (!firstName) return;
+    <header class="relative z-10 w-full max-w-2xl mx-auto pt-6 sm:pt-8 pb-4 flex justify-between items-center text-xs tracking-widest uppercase text-subtleText">
+        <span class="font-serif italic lowercase text-base text-goldAccent">running dinner</span>
+        <nav class="space-x-4 sm:space-x-6">
+            <a href="#how-it-works" class="hover:text-creamText transition-colors">Concept</a>
+            <a href="#sign-up" class="hover:text-creamText transition-colors">Sign Up</a>
+            <a href="#participants" class="hover:text-creamText transition-colors">Guests</a>
+        </nav>
+    </header>
 
-        const payload = {
-            firstName: firstName,
-            lastName: document.getElementById('lastName').value.trim(),
-            email: document.getElementById('email').value.trim(),
-            phone: document.getElementById('phone').value.trim(),
-            street: document.getElementById('street').value.trim(),
-            houseNo: document.getElementById('houseNo').value.trim(),
-            coursePref: document.getElementById('coursePref').value,
-            dietary: document.getElementById('dietary').value
-        };
+    <main class="relative z-10 flex-grow w-full max-w-2xl mx-auto py-6 sm:py-8 space-y-12 sm:space-y-20">
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting...';
+        <section class="text-center pt-6 sm:pt-12 pb-2 sm:pb-4 space-y-4">
+            <h1 class="font-serif text-4xl sm:text-7xl font-normal tracking-tight text-creamText">
+                Running Dinner
+            </h1>
+        </section>
 
-        try {
-            const response = await fetch(API_SUBMIT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
+        <div class="gold-divider"></div>
+
+        <section id="how-it-works" class="space-y-8 sm:space-y-10">
+            <div class="carrd-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl text-center space-y-3 border-goldMuted/30 bg-gradient-to-b from-cardDark to-bgDark">
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">What is a Running Dinner?</h2>
+                <p class="text-subtleText text-xs sm:text-base leading-relaxed font-light max-w-xl mx-auto">
+                    A Running Dinner is a progressive social meal where <strong class="text-creamText font-normal">each participant is responsible for hosting one meal course</strong> (either Starter or Main) at their home for 2 guests, while attending the other course as a guest at someone else's place. At 20:30, all 30 guests come together at one venue for dessert and the after-party!
+                </p>
+            </div>
+
+            <div class="text-center space-y-2 pt-2 sm:pt-4">
+                <h3 class="font-serif text-lg sm:text-2xl font-normal text-creamText">The Schedule</h3>
+                <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">How the evening unfolds</p>
+            </div>
+
+            <div class="space-y-3 sm:space-y-4">
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">17:00</div>
+                        <div>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Starter Course</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Group of 3 (1 host + 2 guests)</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] sm:text-xs text-subtleText bg-bgDark px-2.5 py-1 rounded-full border border-cardBorder shrink-0">Host Home 1</span>
+                </div>
+
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-row items-center justify-between gap-3">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">19:00</div>
+                        <div>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Main Course</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Reshuffled group of 3 new guests</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] sm:text-xs text-subtleText bg-bgDark px-2.5 py-1 rounded-full border border-cardBorder shrink-0">Host Home 2</span>
+                </div>
+
+                <div class="carrd-card p-4 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-goldMuted/40 bg-cardDark/90">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-goldAccent/10 border border-goldAccent/30 flex items-center justify-center text-goldAccent text-sm sm:text-lg font-serif shrink-0">20:30</div>
+                        <div>
+                            <h4 class="text-creamText font-medium text-sm sm:text-base">Dessert & After-Party</h4>
+                            <p class="text-subtleText text-[11px] sm:text-xs mt-0.5">Everyone gathers together for dessert & drinks</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] sm:text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/20 px-3 py-1 rounded-full">Auguste-Schmidt-Str. 22</span>
+                </div>
+            </div>
+        </section>
+
+        <div class="gold-divider"></div>
+
+        <section id="sign-up" class="space-y-6 sm:space-y-8">
+            <div class="text-center space-y-3">
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">Sign Up</h2>
+                <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cardDark border border-cardBorder text-[11px] sm:text-xs text-subtleText">
+                        <span class="w-1.5 h-1.5 rounded-full bg-goldAccent animate-pulse"></span>
+                        <span>Sign-up Deadline: November 11th</span>
+                    </div>
+                    <div class="inline-flex items-center gap-2 text-[11px] sm:text-xs text-subtleText bg-cardDark border border-cardBorder px-3.5 py-1.5 rounded-full">
+                        <span id="spotCounterText" class="text-goldAccent font-medium">Loading spots...</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="signupForm" onsubmit="handleFormSubmit(event)" class="carrd-card p-5 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">First Name *</label>
+                        <input type="text" id="firstName" required placeholder="First name" class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Last Name *</label>
+                        <input type="text" id="lastName" required placeholder="Last name" class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Email Address *</label>
+                        <input type="email" id="email" required placeholder="you@example.com" class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Phone Number *</label>
+                        <input type="tel" id="phone" required placeholder="+49 123 456789" class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Address *</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <input type="text" id="street" required placeholder="Street" class="sm:col-span-2 bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                        <input type="text" id="houseNo" required placeholder="House No. / Floor" class="bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Hosting Preference *</label>
+                    <select id="coursePref" required class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                        <option value="" disabled selected>Select an option</option>
+                        <option value="Starter">I can host the Starter Course (17:00)</option>
+                        <option value="Main">I can host the Main Course (19:00)</option>
+                        <option value="Flexible">Flexible / Guest only</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-[10px] sm:text-xs text-subtleText uppercase tracking-wider block">Dietary Preference *</label>
+                    <select id="dietary" required class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                        <option value="" disabled selected>Select an option</option>
+                        <option value="Flexible">Flexible / No restrictions</option>
+                        <option value="Vegetarian">Vegetarian</option>
+                        <option value="Vegan">Vegan</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-goldAccent text-bgDark font-medium py-3.5 rounded-xl hover:bg-goldAccent/90 active:scale-[0.98] transition-all duration-200 text-sm tracking-wide mt-2">
+                    Complete Registration
+                </button>
+            </form>
+
+            <div id="successBox" class="hidden carrd-card p-6 rounded-2xl sm:rounded-3xl border-goldAccent/40 text-center space-y-3">
+                <div class="w-10 h-10 rounded-full bg-goldAccent/20 text-goldAccent flex items-center justify-center mx-auto text-lg">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="font-serif text-xl text-creamText">Spot Reserved!</h3>
+                <p class="text-subtleText text-xs leading-relaxed max-w-sm mx-auto">
+                    Thank you for signing up. Your first name is now on the guest list. Route details will be shared prior to November 11th.
+                </p>
+            </div>
+        </section>
+
+        <div class="gold-divider"></div>
+
+        <section id="participants" class="space-y-6">
+            <div class="text-center space-y-2">
+                <h2 class="font-serif text-xl sm:text-3xl font-normal text-creamText">Guest List</h2>
+                <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">Registered Participants</p>
+            </div>
+
+            <div id="participantGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3"></div>
+        </section>
+
+    </main>
+
+    <footer class="relative z-10 py-8 text-center text-[11px] sm:text-xs text-subtleText border-t border-cardBorder mt-12 sm:mt-20">
+        <p class="font-serif italic text-goldAccent mb-1">Running Dinner</p>
+        <p>Auguste-Schmidt-Straße 22 • Sign-up Deadline: November 11th</p>
+    </footer>
+
+    <script>
+        const API_GUESTS_URL = "https://running-dinner-backend.vercel.app/api/guests";
+        const API_SUBMIT_URL = "https://running-dinner-backend.vercel.app/api/submit";
+        const MAX_CAPACITY = 30;
+
+        async function fetchParticipants() {
+            try {
+                const response = await fetch(API_GUESTS_URL);
+                if (!response.ok) throw new Error("Failed to fetch guest list");
+                const data = await response.json();
+                renderUI(data);
+            } catch (err) {
+                console.error("Error loading participants:", err);
+                document.getElementById('spotCounterText').textContent = "Unable to load spots";
+            }
+        }
+
+        function renderUI(participants) {
+            const grid = document.getElementById('participantGrid');
+            const counterText = document.getElementById('spotCounterText');
+            const count = participants.length;
+            
+            counterText.textContent = `${count} of ${MAX_CAPACITY} spots filled`;
+            grid.innerHTML = '';
+
+            participants.forEach(p => {
+                const name = p.firstName || "Guest";
+                const card = document.createElement('div');
+                card.className = 'carrd-card px-3 py-2.5 sm:px-4 sm:py-3 rounded-xl text-center text-creamText text-xs sm:text-sm border border-cardBorder flex items-center justify-center gap-2';
+                card.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-goldAccent/60 shrink-0"></span><span class="truncate">${escapeHtml(name)}</span>`;
+                grid.appendChild(card);
             });
 
-            if (response.ok) {
-                document.getElementById('signupForm').classList.add('hidden');
-                document.getElementById('successBox').classList.remove('hidden');
-                await fetchParticipants();
-            } else {
-                const errData = await response.json();
-                throw new Error(errData.error || 'Submission failed');
+            if (count >= MAX_CAPACITY) {
+                const btn = document.getElementById('submitBtn');
+                btn.disabled = true;
+                btn.textContent = 'All 30 Spots Filled';
+                btn.className = 'w-full bg-cardBorder text-subtleText font-medium py-3.5 rounded-xl cursor-not-allowed text-sm tracking-wide mt-4';
             }
-        } catch (err) {
-            console.error("Submission Error:", err);
-            alert('Error: ' + err.message);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Complete Registration';
         }
-    }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const firstNameInput = document.getElementById('firstName');
+            const firstName = firstNameInput.value.trim();
+
+            if (!firstName) return;
+
+            const payload = {
+                firstName: firstName,
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                street: document.getElementById('street').value.trim(),
+                houseNo: document.getElementById('houseNo').value.trim(),
+                coursePref: document.getElementById('coursePref').value,
+                dietary: document.getElementById('dietary').value
+            };
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            try {
+                const response = await fetch(API_SUBMIT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    document.getElementById('signupForm').classList.add('hidden');
+                    document.getElementById('successBox').classList.remove('hidden');
+                    await fetchParticipants();
+                } else {
+                    const errData = await response.json();
+                    throw new Error(errData.error || 'Submission failed');
+                }
+            } catch (err) {
+                console.error("Submission Error:", err);
+                alert('Error: ' + err.message);
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Complete Registration';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.onload = function() {
+            fetchParticipants();
+        };
+    </script>
+</body>
+</html>
