@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Running Dinner</title>
+    <style>
+        body {
+            background-color: #0f0e0d;
+            color: #f3efea;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+    <script>
+        (function() {
+            const now = new Date();
+            const currentYear = now.getFullYear();
+            // Month is 0-indexed in JS: 10 = November, 16 = 16th at 00:00:00 local time
+            const cutoffDate = new Date(currentYear, 10, 16, 0, 0, 0);
+
+            if (now < cutoffDate) {
+                window.location.replace("open.html");
+            } else {
+                window.location.replace("closed.html");
+            }
+        })();
+    </script>
+</head>
+<body>
+    <noscript>
+        <p>Please enable JavaScript or visit <a href="closed.html" style="color: #d4af37;">the event page</a>.</p>
+    </noscript>
+</body>
+</html>
