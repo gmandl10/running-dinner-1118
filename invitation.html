@@ -426,7 +426,7 @@
         function renderInstructions(el, data) {
             if (!el || !data) return;
             el.innerHTML = '';
-    
+        
             if (Array.isArray(data)) {
                 const ul = document.createElement('ul');
                 ul.className = 'text-left list-disc list-inside space-y-1.5';
@@ -438,7 +438,19 @@
                 el.appendChild(ul);
             } else {
                 const p = document.createElement('p');
-                p.textContent = data;
+                p.className = 'whitespace-pre-line break-words text-left';
+        
+                // Escape HTML first so the text is safe, then turn URLs into links
+                const escaped = String(data)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;');
+        
+                p.innerHTML = escaped.replace(
+                    /(https?:\/\/[^\s]+)/g,
+                    '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-goldAccent underline hover:text-creamText transition-colors">$1</a>'
+                );
+        
                 el.appendChild(p);
             }
         }
