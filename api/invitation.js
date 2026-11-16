@@ -42,7 +42,8 @@ export default async function handler(req, res) {
       starterExtra: p.starterExtra || '',
       mainLocation: p.mainLocation || '',
       mainExtra: p.mainExtra || '',
-      hosting: p.hosting || ''
+      hosting: p.hosting || '',
+      secretMission: p.secretMission || ''
     });
   } catch (err) {
     return res.status(500).json({ error: err.message });
