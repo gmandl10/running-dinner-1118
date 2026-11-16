@@ -415,7 +415,15 @@
         }
 
         // Renders a string as a paragraph, or an array as a bulleted list
-    function renderInstructions(el, data) {
+        function handleLookup(event) {
+            event.preventDefault();
+            const email = document.getElementById('emailInput').value.trim();
+            if (email) {
+                loadInvitation(email);
+            }
+        }
+
+        function renderInstructions(el, data) {
             if (!el || !data) return;
             el.innerHTML = '';
     
@@ -447,13 +455,6 @@
             secretToggle.textContent = isHidden ? 'Tap to reveal' : 'Hide';
         });
 
-        function handleLookup(event) {
-            event.preventDefault();
-            const email = document.getElementById('emailInput').value.trim();
-            if (email) {
-                loadInvitation(email);
-            }
-        }
 
         // Auto-load if ?email=... is present in the URL
         window.onload = function() {
