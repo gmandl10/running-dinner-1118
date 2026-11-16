@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Running Dinner | Your Invitation</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        bgDark: '#0f0e0d',
+                        cardDark: '#171614',
+                        cardBorder: '#292724',
+                        goldAccent: '#d4af37',
+                        goldMuted: '#9e8128',
+                        creamText: '#f3efea',
+                        subtleText: '#a19a91',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        html, body {
+            background-color: #0f0e0d;
+            color: #f3efea;
+            overflow-x: hidden;
+            width: 100%;
+            -webkit-text-size-adjust: 100%;
+            -webkit-tap-highlight-color: transparent;
+        }
+        input {
+            font-size: 16px !important;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0.75rem;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f0e0d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #292724;
+            border-radius: 3px;
+        }
+        .carrd-card {
+            background-color: #171614;
+            border: 1px solid #292724;
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .gold-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, #d4af37 50%, transparent 100%);
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-goldAccent/30 selection:text-creamText px-4 sm:px-6">
+
+    <!-- Ambient Background Glow -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[350px] sm:w-[600px] h-[350px] sm:h-[600px] bg-goldAccent/5 rounded-full blur-[90px] sm:blur-[120px]"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="relative z-10 w-full max-w-2xl mx-auto pt-6 sm:pt-8 pb-4 flex justify-between items-center text-xs tracking-widest uppercase text-subtleText">
+        <span class="font-serif italic lowercase text-base text-goldAccent">running dinner</span>
+        <nav class="space-x-5 sm:space-x-6">
+            <a href="#itinerary" class="hover:text-creamText transition-colors">Itinerary</a>
+            <a href="#instructions" class="hover:text-creamText transition-colors">Instructions</a>
+        </nav>
+    </header>
+
+    <main class="relative z-10 flex-grow w-full max-w-2xl mx-auto py-6 sm:py-8 space-y-12 sm:space-y-16">
+
+        <!-- Hero Title -->
+        <section class="text-center pt-4 sm:pt-8 pb-2 space-y-3">
+            <p class="text-[10px] sm:text-xs tracking-[0.25em] uppercase text-goldAccent">Personal Invitation</p>
+            <h1 id="heroGreeting" class="font-serif text-4xl sm:text-6xl font-normal tracking-tight text-creamText">
+                Running Dinner
+            </h1>
+            <p class="text-subtleText text-xs sm:text-sm font-light">Three Courses, New Faces</p>
+        </section>
+
+        <!-- Email Lookup Box (Hidden automatically once loaded) -->
+        <section id="lookupSection" class="carrd-card p-6 sm:p-8 rounded-2xl sm:rounded-3xl space-y-4 max-w-md mx-auto">
+            <div class="text-center space-y-1.5">
+                <h2 class="font-serif text-xl text-creamText">View Your Route</h2>
+                <p class="text-subtleText text-xs">Enter the email address you used to register.</p>
+            </div>
+            <form onsubmit="handleLookup(event)" class="space-y-3">
+                <input type="email" id="emailInput" required placeholder="you@example.com" class="w-full bg-bgDark border border-cardBorder rounded-xl px-4 py-3 text-creamText focus:outline-none focus:border-goldAccent transition-colors">
+                <button type="submit" id="lookupBtn" class="w-full bg-goldAccent text-bgDark font-medium py-3 rounded-xl hover:bg-goldAccent/90 active:scale-[0.98] transition-all text-sm tracking-wide">
+                    Unlock Invitation
+                </button>
+            </form>
+            <p id="lookupError" class="hidden text-center text-xs text-red-400 pt-1"></p>
+        </section>
+
+        <!-- Main Invitation Content (Revealed after lookup) -->
+        <div id="invitationContent" class="hidden space-y-12 sm:space-y-16">
+
+            <div class="gold-divider"></div>
+
+            <!-- ITINERARY SECTION -->
+            <section id="itinerary" class="space-y-6 sm:space-y-8">
+                <div class="text-center space-y-2">
+                    <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">Itinerary</h2>
+                    <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">Your Evening Schedule</p>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- 17:00 Starter Course Card -->
+                    <div id="starterCard" class="carrd-card p-5 sm:p-7 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-base font-serif shrink-0">
+                                    17:00
+                                </div>
+                                <div>
+                                    <h3 class="text-creamText font-medium text-base sm:text-lg">Starter Course</h3>
+                                    <p id="starterSubtitle" class="text-subtleText text-xs">Loading...</p>
+                                </div>
+                            </div>
+                            <span id="starterBadge" class="text-[10px] sm:text-xs px-3 py-1 rounded-full border shrink-0"></span>
+                        </div>
+
+                        <div class="border-t border-cardBorder pt-3.5 space-y-2 text-xs sm:text-sm">
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-location-dot text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Address</span>
+                                    <span id="starterAddressText" class="text-creamText font-medium"></span>
+                                </div>
+                            </div>
+
+                            <div id="starterExtraRow" class="flex items-start gap-2.5 pt-1">
+                                <i class="fa-solid fa-bell text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Door / Bell Info</span>
+                                    <span id="starterExtraText" class="text-creamText"></span>
+                                </div>
+                            </div>
+
+                            <div id="starterHostingRow" class="hidden flex items-start gap-2.5 pt-1">
+                                <i class="fa-solid fa-utensils text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Your Guests</span>
+                                    <span id="starterGuestsText" class="text-creamText"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 19:00 Main Course Card -->
+                    <div id="mainCard" class="carrd-card p-5 sm:p-7 rounded-2xl space-y-4">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-cardBorder/50 border border-cardBorder flex items-center justify-center text-goldAccent text-sm sm:text-base font-serif shrink-0">
+                                    19:00
+                                </div>
+                                <div>
+                                    <h3 class="text-creamText font-medium text-base sm:text-lg">Main Course</h3>
+                                    <p id="mainSubtitle" class="text-subtleText text-xs">Loading...</p>
+                                </div>
+                            </div>
+                            <span id="mainBadge" class="text-[10px] sm:text-xs px-3 py-1 rounded-full border shrink-0"></span>
+                        </div>
+
+                        <div class="border-t border-cardBorder pt-3.5 space-y-2 text-xs sm:text-sm">
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-location-dot text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Address</span>
+                                    <span id="mainAddressText" class="text-creamText font-medium"></span>
+                                </div>
+                            </div>
+
+                            <div id="mainExtraRow" class="flex items-start gap-2.5 pt-1">
+                                <i class="fa-solid fa-bell text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Door / Bell Info</span>
+                                    <span id="mainExtraText" class="text-creamText"></span>
+                                </div>
+                            </div>
+
+                            <div id="mainHostingRow" class="hidden flex items-start gap-2.5 pt-1">
+                                <i class="fa-solid fa-utensils text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Your Guests</span>
+                                    <span id="mainGuestsText" class="text-creamText"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 20:30 Dessert & After-Party Card -->
+                    <div class="carrd-card p-5 sm:p-7 rounded-2xl space-y-4 border-goldMuted/40 bg-cardDark/90">
+                        <div class="flex items-center justify-between gap-3">
+                            <div class="flex items-center gap-3.5">
+                                <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-goldAccent/10 border border-goldAccent/30 flex items-center justify-center text-goldAccent text-sm sm:text-base font-serif shrink-0">
+                                    20:30
+                                </div>
+                                <div>
+                                    <h3 class="text-creamText font-medium text-base sm:text-lg">Dessert & After-Party</h3>
+                                    <p class="text-subtleText text-xs">Everyone gathers together</p>
+                                </div>
+                            </div>
+                            <span class="text-[10px] sm:text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/20 px-3 py-1 rounded-full shrink-0">
+                                Finale
+                            </span>
+                        </div>
+
+                        <div class="border-t border-cardBorder pt-3.5 text-xs sm:text-sm">
+                            <div class="flex items-start gap-2.5">
+                                <i class="fa-solid fa-champagne-glasses text-goldAccent mt-1 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <span class="text-subtleText block text-[10px] uppercase tracking-wider">Venue</span>
+                                    <span class="text-creamText font-medium">Auguste-Schmidt-Str. 22</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="gold-divider"></div>
+
+            <!-- INSTRUCTIONS SECTION (Left blank for now) -->
+            <section id="instructions" class="space-y-6">
+                <div class="text-center space-y-2">
+                    <h2 class="font-serif text-2xl sm:text-3xl font-normal text-creamText">Instructions</h2>
+                    <p class="text-subtleText text-[10px] sm:text-xs tracking-wider uppercase">Guidelines & Notes</p>
+                </div>
+
+                <div class="carrd-card p-6 sm:p-8 rounded-2xl min-h-[120px] flex items-center justify-center text-center">
+                    <!-- Add your instructions content here later -->
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="relative z-10 py-8 text-center text-[11px] sm:text-xs text-subtleText border-t border-cardBorder mt-12 sm:mt-20">
+        <p class="font-serif italic text-goldAccent mb-1">Running Dinner</p>
+        <p>Auguste-Schmidt-Straße 22</p>
+    </footer>
+
+    <script>
+        const API_INVITATION_URL = "https://running-dinner-1118.vercel.app/api/invitation";
+
+        async function loadInvitation(email) {
+            const lookupBtn = document.getElementById('lookupBtn');
+            const lookupError = document.getElementById('lookupError');
+            
+            lookupBtn.disabled = true;
+            lookupBtn.textContent = "Loading...";
+            lookupError.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${API_INVITATION_URL}?email=${encodeURIComponent(email)}`);
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || "Could not load invitation.");
+                }
+
+                renderInvitation(data);
+            } catch (err) {
+                lookupError.textContent = err.message;
+                lookupError.classList.remove('hidden');
+                lookupBtn.disabled = false;
+                lookupBtn.textContent = "Unlock Invitation";
+            }
+        }
+
+        function renderInvitation(data) {
+            // Update greeting
+            document.getElementById('heroGreeting').textContent = `Welcome, ${data.firstName}`;
+
+            // Determine hosting vs guest status for Starter and Main
+            const role = (data.assignedRole || '').toLowerCase();
+            const starterLoc = data.starterLocation || '';
+            const mainLoc = data.mainLocation || '';
+
+            const isStarterHost = role.includes('starter') || starterLoc.toLowerCase().includes('your home') || starterLoc.toLowerCase().includes('hosting');
+            const isMainHost = role.includes('main') || mainLoc.toLowerCase().includes('your home') || mainLoc.toLowerCase().includes('hosting');
+
+            // --- Populate Starter Course ---
+            const starterBadge = document.getElementById('starterBadge');
+            const starterSubtitle = document.getElementById('starterSubtitle');
+            const starterAddressText = document.getElementById('starterAddressText');
+            const starterExtraRow = document.getElementById('starterExtraRow');
+            const starterExtraText = document.getElementById('starterExtraText');
+            const starterHostingRow = document.getElementById('starterHostingRow');
+            const starterGuestsText = document.getElementById('starterGuestsText');
+
+            if (isStarterHost) {
+                document.getElementById('starterCard').classList.add('border-goldMuted/40');
+                starterBadge.textContent = "You Are Hosting";
+                starterBadge.className = "text-[10px] sm:text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/30 px-3 py-1 rounded-full shrink-0";
+                starterSubtitle.textContent = "Prepare the starter at your place";
+                starterAddressText.textContent = starterLoc || "Your Home";
+                starterExtraRow.classList.add('hidden');
+                
+                if (data.hosting) {
+                    starterHostingRow.classList.remove('hidden');
+                    starterGuestsText.textContent = data.hosting;
+                }
+            } else {
+                starterBadge.textContent = "Guest";
+                starterBadge.className = "text-[10px] sm:text-xs text-subtleText bg-bgDark border border-cardBorder px-3 py-1 rounded-full shrink-0";
+                starterSubtitle.textContent = "Enjoy the starter as a guest";
+                starterAddressText.textContent = starterLoc || "TBA";
+
+                if (data.starterExtra) {
+                    starterExtraText.textContent = data.starterExtra;
+                } else {
+                    starterExtraRow.classList.add('hidden');
+                }
+            }
+
+            // --- Populate Main Course ---
+            const mainBadge = document.getElementById('mainBadge');
+            const mainSubtitle = document.getElementById('mainSubtitle');
+            const mainAddressText = document.getElementById('mainAddressText');
+            const mainExtraRow = document.getElementById('mainExtraRow');
+            const mainExtraText = document.getElementById('mainExtraText');
+            const mainHostingRow = document.getElementById('mainHostingRow');
+            const mainGuestsText = document.getElementById('mainGuestsText');
+
+            if (isMainHost) {
+                document.getElementById('mainCard').classList.add('border-goldMuted/40');
+                mainBadge.textContent = "You Are Hosting";
+                mainBadge.className = "text-[10px] sm:text-xs text-goldAccent bg-goldAccent/10 border border-goldAccent/30 px-3 py-1 rounded-full shrink-0";
+                mainSubtitle.textContent = "Prepare the main course at your place";
+                mainAddressText.textContent = mainLoc || "Your Home";
+                mainExtraRow.classList.add('hidden');
+
+                if (data.hosting) {
+                    mainHostingRow.classList.remove('hidden');
+                    mainGuestsText.textContent = data.hosting;
+                }
+            } else {
+                mainBadge.textContent = "Guest";
+                mainBadge.className = "text-[10px] sm:text-xs text-subtleText bg-bgDark border border-cardBorder px-3 py-1 rounded-full shrink-0";
+                mainSubtitle.textContent = "Enjoy the main course as a guest";
+                mainAddressText.textContent = mainLoc || "TBA";
+
+                if (data.mainExtra) {
+                    mainExtraText.textContent = data.mainExtra;
+                } else {
+                    mainExtraRow.classList.add('hidden');
+                }
+            }
+
+            // Switch view from lookup form to invitation
+            document.getElementById('lookupSection').classList.add('hidden');
+            document.getElementById('invitationContent').classList.remove('hidden');
+        }
+
+        function handleLookup(event) {
+            event.preventDefault();
+            const email = document.getElementById('emailInput').value.trim();
+            if (email) {
+                loadInvitation(email);
+            }
+        }
+
+        // Auto-load if ?email=... is present in the URL
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const emailParam = params.get('email');
+            if (emailParam) {
+                document.getElementById('emailInput').value = emailParam;
+                loadInvitation(emailParam);
+            }
+        };
+    </script>
+</body>
+</html>
