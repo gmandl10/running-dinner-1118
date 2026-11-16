@@ -94,6 +94,7 @@
             <h1 id="heroGreeting" class="font-serif text-4xl sm:text-6xl font-normal tracking-tight text-creamText">
                 Running Dinner
             </h1>
+            <p id="heroAssignment" class="hidden font-serif italic text-lg sm:text-xl text-goldAccent"></p>
             <p class="text-subtleText text-xs sm:text-sm font-light">Three Courses, New Faces</p>
         </section>
 
@@ -293,6 +294,14 @@
         function renderInvitation(data) {
             // Update greeting
             document.getElementById('heroGreeting').textContent = `Welcome, ${data.firstName}`;
+
+            // Use the 'assigned' column directly from the sheet
+            const assignedCourse = (data.assigned || '').trim();
+            const heroAssignment = document.getElementById('heroAssignment');
+            if (assignedCourse) {
+                heroAssignment.textContent = `You are assigned the ${assignedCourse} course`;
+                heroAssignment.classList.remove('hidden');
+            }
 
             // Determine hosting vs guest status for Starter and Main
             const role = (data.assignedRole || '').toLowerCase();
