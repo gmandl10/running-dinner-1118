@@ -317,24 +317,18 @@
                 heroAssignment.classList.remove('hidden');
             }
 
+            let courseInstruction
             if (assignedCourse=="Dessert") {
-                const courseInstruction = "You've pulled the dessert card and got lucky.. no hosting! Please prepare your dessert beforehand and drop it off at my place during the day on Wednesday or before heading to your starter, or pick it up on your way to the after party. Please be a good guest and arrive on time to your courses.";
+                courseInstruction = "You've pulled the dessert card and got lucky.. no hosting! Please prepare your dessert beforehand and drop it off at my place during the day on Wednesday or before heading to your starter, or pick it up on your way to the after party. Please be a good guest and arrive on time to your courses.";
             } else if (assignedCourse=="Main"){
-                const courseInstruction = "You landed the big one.. or drew the short stick and got thrown into the big responsibility because too many people wanted to host the starter. The Main Course will be a little tougher because you'll have to leave the starter a little early to prepare for the main course. Drawing on cooking hacks like re-boiling the precooked pasta over leaving your lasagna on low heat in the oven. God gives his toughest battles to his strongest soldiers ;). Please have the food ready for 18:45 when you're guests arrive. I've prioritized that the distances for the main hosts from their starter course is minimized but it may still be necessary to leave the starter at 18:15.";
+                courseInstruction = "You landed the big one.. or drew the short stick and got thrown into the big responsibility because too many people wanted to host the starter. The Main Course will be a little tougher because you'll have to leave the starter a little early to prepare for the main course. Drawing on cooking hacks like re-boiling the precooked pasta over leaving your lasagna on low heat in the oven. God gives his toughest battles to his strongest soldiers ;). Please have the food ready for 18:45 when you're guests arrive. I've prioritized that the distances for the main hosts from their starter course is minimized but it may still be necessary to leave the starter at 18:15.";
             } else {
-                const courseInstruction = "You get the honor of starting the fun for the evening. Please aim to have your food ready for when your guests arrive at 17:00 (and if you're feeling up for it- throwing a bottle of wine in the fridge an hour before guests arrive ;) ). I'll need your help to get everybody to their main course on time so start kicking people out at around 18:30 so that they get to their next destination on time.";
+                courseInstruction = "You get the honor of starting the fun for the evening. Please aim to have your food ready for when your guests arrive at 17:00 (and if you're feeling up for it- throwing a bottle of wine in the fridge an hour before guests arrive ;) ). I'll need your help to get everybody to their main course on time so start kicking people out at around 18:30 so that they get to their next destination on time.";
             }
 
             const generalInstruction = "If you need help getting the ball rolling, I'm a big fan of We're Not Really Strangers which is a card game with questions for building meaningful connections. I've downloaded a free digital pack:\nSince we're all the students the Back to School Questions might be a good place to start: https://cdn.shopify.com/s/files/1/1448/3500/files/Back_To_School_Edition.pdf?v=1663870952\nSample questions: What do you think I do for fun? If you weren't in school, what would you be doing? What kind of friends are you looking for?\n\nOtherwise here is the link to the digital free game: https://munjoonteo.github.io/wnrs/";
 
             const secretMission = (data.secretMission || '').trim();
-
-            const gIElement = document.getElementById('general-instructions');
-            gIElement.textContent = generalInstructions;
-            const gIElement = document.getElementById('course-instructions');
-            gIElement.textContent = courseInstruction;
-            const sMElement = document.getElementById('secret-mission');
-            gIElement.textContent = secretMission;
 
             // Determine hosting vs guest status for Starter and Main
             const role = (data.assignedRole || '').toLowerCase();
@@ -445,8 +439,11 @@
                 el.appendChild(p);
             }
         }
+        renderInstructions(document.getElementById('general-instructions'), generalInstruction);
+        renderInstructions(document.getElementById('course-instructions'), courseInstruction);
+        renderInstructions(document.getElementById('secret-mission'), secretMission);
 
-
+        
         // Auto-load if ?email=... is present in the URL
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
