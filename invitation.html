@@ -261,9 +261,10 @@
                 <div id="course-instructions" class="text-subtleText text-sm leading-relaxed space-y-2"></div>
             </div>
         
-            <div class="carrd-card p-6 sm:p-8 rounded-2xl space-y-3 text-center">
+            <!-- Secret mission (hidden until tapped) -->
+            <div id="secret-card" class="carrd-card p-6 sm:p-8 rounded-2xl space-y-3 text-center">
                 <h3 class="font-serif text-lg sm:text-xl text-creamText">Secret Mission</h3>
-                <button id="secret-toggle" type="button"
+                <button id="secret-toggle" type="button" onclick="toggleSecret()"
                     class="text-[10px] sm:text-xs tracking-wider uppercase text-subtleText border border-subtleText/40 rounded-full px-4 py-2 hover:text-creamText hover:border-creamText transition-colors">
                     Tap to reveal
                 </button>
@@ -424,6 +425,12 @@
             if (email) {
                 loadInvitation(email);
             }
+        }
+        function toggleSecret() {
+            const box = document.getElementById('secret-mission');
+            const btn = document.getElementById('secret-toggle');
+            const isHidden = box.classList.toggle('hidden');
+            btn.textContent = isHidden ? 'Tap to reveal' : 'Hide';
         }
 
         function renderInstructions(el, data) {
