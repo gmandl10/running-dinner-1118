@@ -264,11 +264,7 @@
             <!-- Secret mission (hidden until tapped) -->
             <div class="carrd-card p-6 sm:p-8 rounded-2xl space-y-3 text-center">
                 <h3 class="font-serif text-lg sm:text-xl text-creamText">Secret Mission</h3>
-                <button id="secret-toggle" type="button"
-                    class="text-[10px] sm:text-xs tracking-wider uppercase text-subtleText border border-subtleText/40 rounded-full px-4 py-2 hover:text-creamText hover:border-creamText transition-colors">
-                    Tap to reveal
-                </button>
-                <div id="secret-mission" class="hidden text-subtleText text-sm leading-relaxed space-y-2"></div>
+                <div id="secret-mission" class="text-subtleText text-sm leading-relaxed space-y-2"></div>
             </div>
         </section>
 
@@ -332,6 +328,13 @@
             const generalInstruction = "If you need help getting the ball rolling, I'm a big fan of We're Not Really Strangers which is a card game with questions for building meaningful connections. I've downloaded a free digital pack:\nSince we're all the students the Back to School Questions might be a good place to start: https://cdn.shopify.com/s/files/1/1448/3500/files/Back_To_School_Edition.pdf?v=1663870952\nSample questions: What do you think I do for fun? If you weren't in school, what would you be doing? What kind of friends are you looking for?\n\nOtherwise here is the link to the digital free game: https://munjoonteo.github.io/wnrs/";
 
             const secretMission = (data.secretMission || '').trim();
+
+            const gIElement = document.getElementById('general-instructions');
+            gIElement.textContent = generalInstructions;
+            const gIElement = document.getElementById('course-instructions');
+            gIElement.textContent = courseInstruction;
+            const sMElement = document.getElementById('secret-mission');
+            gIElement.textContent = secretMission;
 
             // Determine hosting vs guest status for Starter and Main
             const role = (data.assignedRole || '').toLowerCase();
@@ -442,18 +445,6 @@
                 el.appendChild(p);
             }
         }
-    
-        renderInstructions(document.getElementById('general-instructions'), generalInstructions);
-        renderInstructions(document.getElementById('course-instructions'), courseInstruction);
-        renderInstructions(document.getElementById('secret-mission'), secretMission);
-    
-        // Reveal / hide the secret mission
-        const secretToggle = document.getElementById('secret-toggle');
-        const secretBox = document.getElementById('secret-mission');
-        secretToggle.addEventListener('click', () => {
-            const isHidden = secretBox.classList.toggle('hidden');
-            secretToggle.textContent = isHidden ? 'Tap to reveal' : 'Hide';
-        });
 
 
         // Auto-load if ?email=... is present in the URL
