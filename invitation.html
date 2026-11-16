@@ -405,6 +405,9 @@
                     mainExtraRow.classList.add('hidden');
                 }
             }
+            renderInstructions(document.getElementById('general-instructions'), generalInstruction);
+            renderInstructions(document.getElementById('course-instructions'), courseInstruction);
+            renderInstructions(document.getElementById('secret-mission'), secretMission);
 
             // Switch view from lookup form to invitation
             document.getElementById('lookupSection').classList.add('hidden');
@@ -439,11 +442,6 @@
                 el.appendChild(p);
             }
         }
-        renderInstructions(document.getElementById('general-instructions'), generalInstruction);
-        renderInstructions(document.getElementById('course-instructions'), courseInstruction);
-        renderInstructions(document.getElementById('secret-mission'), secretMission);
-
-        
         // Auto-load if ?email=... is present in the URL
         window.onload = function() {
             const params = new URLSearchParams(window.location.search);
