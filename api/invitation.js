@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     // Return only the fields needed for this participant's invitation
     return res.status(200).json({
       firstName: p.firstName || 'Guest',
-      assignedRole: p.assignedRole || '',
+      assignedRole: p.assigned || '',
       starterLocation: p.starterLocation || '',
       starterExtra: p.starterExtra || '',
       mainLocation: p.mainLocation || '',
