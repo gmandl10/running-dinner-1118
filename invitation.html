@@ -314,7 +314,7 @@
             document.getElementById('heroGreeting').textContent = `Welcome, ${data.firstName}`;
 
             // Use the 'assigned' column directly from the sheet
-            const assignedCourse = (data.assigned || '').trim();
+            const assignedCourse = (data.assignedRole || '').trim();
             const heroAssignment = document.getElementById('heroAssignment');
             if (assignedCourse) {
                 heroAssignment.textContent = `You are assigned the ${assignedCourse} course`;
